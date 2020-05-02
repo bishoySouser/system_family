@@ -15,13 +15,14 @@ class CreateFamiliesTable extends Migration
     {
         Schema::create('families', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('family_head'); // individuals->id;
-            $table->string('family_name',50);
+            $table->unsignedBigInteger('father_id')->unique(); // individuals->id;
+            $table->unsignedBigInteger('mather_id')->unique(); // individuals->id;
             $table->date('family_date_from');
             $table->timestamps();
 
             //foreign key
-            $table->foreign('family_head')->references('id')->on('individuals');
+            $table->foreign('father_id')->references('id')->on('individuals');
+            $table->foreign('mather_id')->references('id')->on('individuals');
         });
     }
 

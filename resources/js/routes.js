@@ -1,5 +1,6 @@
 import Home from './pages/Home'
 import Individual from './pages/Individual'
+import IndividualEdit from './pages/edit/IndividualEdit'
 import Family from './pages/Family'
 import AddFamily from './pages/family/FamilyAdd'
 import ImportExecl from './pages/ImportExecl'
@@ -12,8 +13,9 @@ export default [
         path: '/',
         component: Home,
         name: 'home',
+        alias: '/home',
         meta: {
-            secure: true
+            requiresAuth: true
         }
     },
     {
@@ -21,7 +23,16 @@ export default [
         component: Individual,
         name: 'individual',
         meta: {
-            secure: true
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/individual/one/:individualId',
+        component: IndividualEdit,
+        name: 'individual_edit',
+        props: true,
+        meta: {
+            requiresAuth: true
         }
     },
     {
@@ -29,32 +40,40 @@ export default [
         component: Family,
         name: 'family',
         meta: {
-            secure: true
+            requiresAuth: true
         }
     },
     {
         path: '/family/New',
         component: AddFamily,
-        name: 'add-family'
+        name: 'add-family',
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path: '/import-excel',
         component: ImportExecl,
-        name: 'import-excel'
+        name: 'import-excel',
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path: '/export-excel',
         component: ExportExcel,
-        name: 'export-excel'
+        name: 'export-excel',
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path: '/login',
         component: Login,
         name: 'login',
         meta: {
-            secure: false
+            guest: true
         }
-        
     }
 
 ]

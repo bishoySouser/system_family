@@ -25,4 +25,7 @@ class Individual extends Model
         "social_status",
         "special"
     ];
+    public function family(){
+        return $this->hasOne('App\Family');
+    }
 }

@@ -31,10 +31,21 @@ Route::group([
 
 });
 // individual
-Route::post('individual/add', 'Api\IndividualController@insertIndividual');
+Route::post('individual/add', 'Api\IndividualController@insertIndividual'); //add persone information
+Route::get('individual/one/{id}','Api\IndividualController@getIndividual'); //select one persone
+Route::get('individual/all','Api\IndividualController@getIndividuals'); //select all persone
+Route::put('individual/edit/{id}','Api\IndividualController@editIndividual'); //edit persone information
+Route::delete('individual/delete/{id}', 'Api\IndividualController@deleteIndividual'); //delete persone
 // excel
-Route::post('individual/excel', 'Api\ExcelController@importIndividuals');
+Route::post('individual/excel/import', 'Api\ExcelController@importIndividuals');
 
-// Route::post('user/register', 'Api\RegisterController@register');
+//family
+Route::post('family/add','Api\FamilyController@addFamily');
+Route::get('family/one/{id}','Api\FamilyController@getFamily');
+Route::get('family/all','Api\FamilyController@getFamilies');
+Route::put('family/edit/{id}','Api\FamilyController@editFamily');
+Route::delete('family/delete/{id}','Api\FamilyController@deleteFamily');
 
-// Route::post('user/login', 'Api\LoginController@login');
+//search
+Route::get('search/individual/{search}','Api\SearchController@individualName');
+Route::get('search/individual/young/{grander}/{search}','Api\SearchController@getYoung');

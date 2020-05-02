@@ -31,7 +31,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                     
-                    <a class="dropdown-item" @click='logout' href="javascript:;">Logout</a>
+                    <a class="dropdown-item" @click.prevent='logout' href="javascript:;">Logout</a>
                     </div>
                 </li>
             </ul>
@@ -51,12 +51,8 @@ export default {
     },
     methods: {
         logout(){
-            // axios.post('api/auth/logout').then((res) => {
-            //     console.log(res.data)
-            //     // this.$router.push('/login')
-            // })
-            localStorage.removeItem('token')
-            this.$router.push('/login');
+            this.$store.commit('logout')
+            this.$router.push('/login')
         }
     }
 }

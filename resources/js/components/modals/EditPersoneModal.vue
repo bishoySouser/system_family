@@ -1,11 +1,11 @@
 <template>
     
 
-        <div id='addPersoneModal' class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div id='EditPersoneModal' class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Persone</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Persone</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -55,7 +55,7 @@
                                 <label for="gender">Gender</label>
                                 <select v-model="gender" name="" id="gender" class='form-control'>
                                     <option value="male">Male</option>
-                                    <option value="woman">Woman</option>
+                                    <option value="female">Female</option>
                                 </select>
                             </div>
                         </div>
@@ -137,7 +137,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click='onConfirm'>Confirm</button>
+                    <button type="button" class="btn btn-primary" @click='onConfirm'>Edit</button>
                 </div>
     
             </div>
@@ -149,7 +149,8 @@
 <script>
 import cities from '../../assest/files/eg.json'
     export default {
-        name: 'addPersoneModal',
+        name: 'EditPersoneModal',
+        props:['individual'],
         data(){
             return{
                 cities: cities,
@@ -169,6 +170,9 @@ import cities from '../../assest/files/eg.json'
                 mobile2: '',
                 errors: [],
             }
+        },
+        computed: {
+
         },
         methods: {
             onConfirm(){
@@ -204,7 +208,27 @@ import cities from '../../assest/files/eg.json'
                 // }
                 
             }
-        }
+        },
+        mounted() {
+                const self = this
+                // simulating an async call:
+                setTimeout(function() {
+                    self.firstName = self.individual.first_name
+                    self.middleName = self.individual.middle_name
+                    self.lastName = self.individual.last_name
+                    self.birthday = self.individual.date_of_birth
+                    self.placeOfBirth = self.individual.place_of_birth
+                    self.gender = self.individual.gander
+                    self.email = self.individual.email
+                    self.socialStatus = self.individual.social_status
+                    self.area = self.individual.area
+                    self.address = self.individual.address
+                    self.job = self.individual.job
+                    self.homePhone = self.individual.home_phone
+                    self.mobile1 = self.individual.mobile_phone1
+                    self.mobile2 = self.individual.mobile_phone2
+                }, 3000)
+            }
     }
 </script>
 

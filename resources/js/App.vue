@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navbar ></navbar>
+        <navbar v-if="isLogin"></navbar>
         <router-view />
     </div>
 </template>
@@ -17,8 +17,10 @@ export default {
             
         }
     },
-    mounted(){
-        // this.token ? '' : this.init();
+    computed:{
+        isLogin(){
+            return this.$store.getters.isLoggedin;
+        }
     },
     methods: {
         

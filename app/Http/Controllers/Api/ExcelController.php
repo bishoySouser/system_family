@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Validator;
 use Excel;
 use App\Http\Controllers\Api\IndividualController as IndividualCon;
+use App\Individual;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -41,6 +42,7 @@ class ExcelController extends Controller
     }
 
     protected function getFileData($file){
+        $countCol = count($this->headerRow);
         $path = $file->getRealPath();
         // get data
         $data = Excel::load($path)->get();
@@ -54,14 +56,14 @@ class ExcelController extends Controller
         //get All Date
         $all_data = $data->toArray();
         // check header row (Count)
-        if(count($headerRow) != count($this->headerRow)){
-            return response()->json(['error' => 'must to be file has 12 column.'], 401);
+        if(count($headerRow) != $countCol){
+            return response()->json(["error" => "must to be file has {$countCol} column."], 400);
         }else{
             $headerRow_key = 0; // counter array $this->headerRow
             foreach($headerRow as $key){
                 // check header row (Name)
                 if($key != $this->headerRow[$headerRow_key]){
-                    return response()->json(['error' => 'must file like this file.'] , 401);
+                    return response()->json(['error' => 'must file like this file.'] , 400);
                 }
                 $headerRow_key++;
             }
@@ -86,12 +88,10 @@ class ExcelController extends Controller
     
     //insert all data in excel file
     protected function insertDate(array $data, object $individualController){
-        foreach($data as $key=>$value){
-            $individualController->newIndividual($value);
-        }
+        Individual::insert($data);
         $response = [
             'msg' => 'Complate file.',
-            'all_date' => $data,
+            'all_data' => $data,
         ];
         return response()->json($response, 200);
     }

@@ -7,8 +7,9 @@
                         <a class="btn btn-primary" href="#">Add persone</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-primary" href="#">Add Family</a>
+                        <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFamily" data-whatever="@mdo">Add Family</button>
                     </li>
+                    
                 </ul>
                 <form class="form-inline ml-auto">
                     <input v-model="search" type="text" class="form-control mr-sm-2" placeholder="Search">
@@ -17,18 +18,16 @@
             </div>
         </nav>
 
-        <modal />
+        <modalAddFamily />
     </div>
-        
-   
 </template>
 
 <script>
-import modal from '../modals/AddPersoneModal'
+import modalAddFamily from '../modals/AddFamilyModal'
     export default {
         name: 'navFamily',
         components: {
-            modal
+            modalAddFamily
         },
         data(){
             return{

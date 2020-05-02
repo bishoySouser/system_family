@@ -60,9 +60,4 @@ export default {
         width: max-content !important;
     }
 
-    th:nth-child(2), td:nth-child(2) {
-        position:sticky;
-        left:0px;
-        background-color:grey;
-    }
 </style>

@@ -28,7 +28,7 @@ class CreateIndividualsTable extends Migration
             $table->string('home_phone',22);
             $table->string('mobile_phone1',22);
             $table->string('mobile_phone2',22)->nullable();
-            $table->string('job',50);
+            $table->string('job',50)->nullable();
             $table->enum('social_status',['single','married','widower','dead']);
             $table->boolean('special')->nullable();
             $table->timestamps();
