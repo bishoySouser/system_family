@@ -20,6 +20,7 @@ class CreateIndividualsTable extends Migration
             $table->string('last_name',50);
             $table->enum('gander',['male', 'female']);
             $table->date('date_of_birth');
+            $table->integer('age');
             $table->date('date_of_death')->nullable();
             $table->string('place_of_birth',50);
             $table->string('email',255)->nullable();
@@ -29,7 +30,7 @@ class CreateIndividualsTable extends Migration
             $table->string('mobile_phone1',22);
             $table->string('mobile_phone2',22)->nullable();
             $table->string('job',50)->nullable();
-            $table->enum('social_status',['single','married','widower','dead']);
+            $table->enum('social_status',['single','married']);
             $table->boolean('special')->nullable();
             $table->timestamps();
         });

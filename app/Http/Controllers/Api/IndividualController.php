@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Abstracts\ApiController;
 use Validator;
 use App\Individual;
 use DB;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
-class IndividualController extends Controller
+
+class IndividualController extends ApiController
 {
     private $rules = [
         "first_name" => 'required|string',

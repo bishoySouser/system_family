@@ -14,6 +14,7 @@ class Individual extends Model
         "gander",
         "date_of_birth",
         "date_of_death",
+        "age",
         "place_of_birth",
         "email",
         "area", 
