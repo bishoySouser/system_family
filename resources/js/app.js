@@ -2,7 +2,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-
+import Axios from 'axios';
 // vue-router
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
@@ -21,6 +21,7 @@ const router = new VueRouter({
 })
 
 import routes from './routes'
+
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
@@ -46,11 +47,26 @@ router.beforeEach((to, from, next) => {
     }
   })
 
+  
+  axios.interceptors.response.use(function (response){
+      return response;
+  },function (error){
+    if(error.response.status === 401){
+        setTimeout(function(){
+            store.commit('logout')
+            router.push('/login')
+        },3000)
+        
+    }
+    return Promise.reject(error)
+  });
+
 
 
 
 
 import App from './App.vue'
+
 
 new Vue({
     router,

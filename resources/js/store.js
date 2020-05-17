@@ -4,6 +4,7 @@ export default {
     state: {
         currentUser: user,
         isLoggedIn: !!user,
+        expireToken: 5,
         loading: false,
         auth_error: null,
         reg_error:null,
@@ -18,6 +19,9 @@ export default {
         },
         currentUser(state){
             return state.currentUser;
+        },
+        tokenExpire(state){
+            return state.expireToken;
         },
         authError(state){
             return state.auth_error;
@@ -38,8 +42,9 @@ export default {
             state.auth_error = null;
             state.isLoggedIn = true;
             state.loading = false;
-            state.currentUser = Object.assign({}, payload.user, {token: payload.access_token});
+            state.currentUser = Object.assign({}, payload.user);
             localStorage.setItem("user", JSON.stringify(state.currentUser));
+            localStorage.setItem("token", payload.access_token);
         },
         loginFailed(state, payload){
             state.loading = false;
@@ -47,6 +52,7 @@ export default {
         },
         logout(state){
             localStorage.removeItem("user");
+            localStorage.removeItem("token");
             state.isLoggedIn = false;
             state.currentUser = null;
         },

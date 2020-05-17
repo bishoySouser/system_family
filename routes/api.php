@@ -20,23 +20,17 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
-
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
-
 });
 
 //individual
-Route::resource('individual', 'Api\Individuals');
+Route::resource('individual', 'Api\Individuals')->middleware('jwt.auth');
+Route::patch('individual/delete/multiple', 'Api\Individuals@destroyAll');
+Route::get('individual/unmarried/{name}/{gander?}', 'Api\Individuals@unmarried');
 
-// individual
-Route::post('individual/add', 'Api\IndividualController@insertIndividual'); //add persone information
-Route::get('individual/one/{id}','Api\IndividualController@getIndividual'); //select one persone
-Route::get('individual/all','Api\IndividualController@getIndividuals'); //select all persone
-Route::put('individual/edit/{id}','Api\IndividualController@editIndividual'); //edit persone information
-Route::delete('individual/delete/{id}', 'Api\IndividualController@deleteIndividual'); //delete persone
 // excel
 Route::post('individual/excel/import', 'Api\ExcelController@importIndividuals');
 

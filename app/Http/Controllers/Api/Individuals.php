@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Http\Requests\Individual;
+use App\Individual as Model;
+use Illuminate\Support\Facades\DB;
 use App\Http\Abstracts\Individual\CreateIndividual;
-use App\Individual as Persone;
+use App\Http\Abstracts\Individual\EditIndividual;
+use App\Traits\HttpStatusResponse;
 
 class Individuals extends Controller
 {
+    use HttpStatusResponse;
     /**
      * Display a listing of the resource.
      *
@@ -17,17 +21,8 @@ class Individuals extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $individuals = Model::orderBy('created_at', "DESC")->paginate();
+        return $individuals;
     }
 
     /**
@@ -38,9 +33,12 @@ class Individuals extends Controller
      */
     public function store(Individual $request)
     {
-        // $invoice = Persone::create($this->request->all());
-        $perosne =  CreateIndividual::insert($request);
-        return response()->json(["msg" => $perosne] , 200); 
+        $persone = CreateIndividual::insert($request);
+        $response = [
+            "msg" => 'Create New Individual.' ,
+            "id"  => $persone->id
+        ];
+        return $this->created($response);
     }
 
     /**
@@ -51,18 +49,20 @@ class Individuals extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $individual = [];
+        Model::chunk(200, function ($flights) use (&$individual, $id ) {
+            foreach ($flights as $flight) {
+                if($flight->id == $id){
+                    $individual = $flight;
+                    return false;
+                }
+            }
+        });
+        $response = [
+            "msg" => 'get Individual' ,
+            "individual"  => $individual
+        ];
+        return $this->created($response);
     }
 
     /**
@@ -72,9 +72,13 @@ class Individuals extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Individual $request, $id)
     {
-        //
+        // $persone = EditIndividual::update($request , $id);
+        
+        if(EditIndividual::update($request , $id)){
+            return $this->ok('Updated successful');
+        };
     }
 
     /**
@@ -85,6 +89,48 @@ class Individuals extends Controller
      */
     public function destroy($id)
     {
-        //
+        echo 'delete single record.';
+    }
+
+    public function destroyAll(Request $request)
+    {
+        if($request->ids){
+            DB::table('individuals')->whereIn('id' , $request->ids)->delete();
+            return $this->ok('Deleted successful');
+        }else{
+            return $this->unprocessableEntity("Input error!");
+        }
+        
+    }
+    
+    public function unmarried($name, $gander = null){
+        $individuals = array();
+        $row_count = 45;
+        // GET Count individuals Table 
+        $total = DB::table('individuals')->count();
+        $page = ceil($total / $row_count);
+        //Loop for Chunck 
+        for($i = 1; $i < ($page - 1); $i++){
+            $offset = (($i - 1) * $row_count);
+            $start = ($offset == 0 ? 0 : ($offset + 1));
+            $individual = DB::table('individuals')
+                            ->when($gander, function($query, &$gander){
+                                return $query->where("gander", $gander);
+                            })
+                            ->where([
+                                ["is_a_married", "=", 0],
+                                [DB::raw("CONCAT(first_name,' ',middle_name,' ',last_name)"),"Like", $name."%"]
+                            ])
+                            ->skip($start)->take($row_count)->get();
+            if(count($individual)){
+                array_push($individuals, $individual);
+            }
+        }
+        $response = [
+            'msg' => "the people by $name",
+            'individual' => $individuals
+        ];
+        return $this->created($response);
+        
     }
 }

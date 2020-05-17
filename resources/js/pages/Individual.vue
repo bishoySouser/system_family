@@ -5,66 +5,57 @@
         <navindividual v-on:childToParent="onChildClick" v-on:toSearchType='onSearchType'/>
            <div class="card">
                <div class="card-header">
-                   Individuals
+                   <div class="row">
+                       <div class="col-md-4">
+                           Individuals
+                       </div>
+                       <div class="col-md-4 mx-auto">
+                           <ul v-if="visableindividual" class="pagination">
+                                <li class="page-item"><button class="page-link" v-on:click="previousPage()" :disabled="disabledPrevious">Previous</button></li>
+                                <li v-if="lastPage" class="page-item"><button class="page-link" disabled>{{page+"-"+lastPage}}</button></li>
+                                <li class="page-item"><button  class="page-link"  v-on:click="nextPage()" :disabled="disabledNext">Next</button ></li>
+                            </ul>
+                       </div>
+                       <div class="col-md-4">
+                           <button v-if="visableDelete" type="button" class="btn btn-outline-light float-right mr-3" @click="onDelete()">
+                                <i class="text-danger fas fa-trash-alt fa-2x"></i>
+                           </button>
+                       </div>
+                   </div>
+                   
+                   
                </div>
 
-               <div class="card-body" style='min-height: 70vh;'>
+               <div class="card-body">
                    <div class="col-12">
                        <grid-loader v-if='loading' class="m-auto" :color="color" :loading="loading" :size="15"></grid-loader>
                        <!-- table -->
-                       <div v-else class="table-responsive" style='height: 70vh; direction: rtl;'>
-
-                        <table v-if="individuals" class='table table-bordered text-center m-auto'>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Handle</th>
-                                    <th>Email</th>
-                                    <th>Area</th>
-                                    <th>Birthday</th>
-                                    <th>Age(year)</th>
-                                    <th>Home phone</th>
-                                    <th>Mobile number1</th>
-                                    <th>Mobile number2</th>
-                                    <th>Social Status</th>
-                                </tr>
-                            </thead>
-
+                       <div v-else style='direction: rtl;'>
+                        <table v-if="visableindividual" class='table'>
                             <tbody>
                                 <!-- if individual.length > 0 -->
-                                <tr  v-for="(individual, index) in individuals"
-                                :key='index'>
-                                    <td>{{ index+1 }}</td>
-                                    <td class='font-weight-bold'>{{ (individual.first_name+' '+individual.middle_name+' '+individual.last_name).toUpperCase() }}</td>
-                                    <td>
-                                       <router-link :to="{ name: 'individual_edit', params: { individualId: individual.id }}"> <i class="fas fa-edit"></i> </router-link>
+                                <tr class="click-row"  v-for="(individual, index) in individuals" :key='index' @click="goToBlabla(individual.id)">
+                                <!-- <router-link :to="{ name: 'individual_edit', params: { individualId: individual.id }}">  -->
+                                    <td v-on:click.stop="">
+                                        <input type="checkbox" :value="individual.id" v-model="selectedUsers" aria-label="Checkbox for following text input" >
                                     </td>
-                                    <td>{{ individual.email }}</td>
+                                    <td class='font-weight-bold'>{{ (individual.first_name+' '+individual.middle_name+' '+individual.last_name).toUpperCase() }}</td>
+                                    
+                                       <router-link :to="{ name: 'individual_edit', params: { individualId: individual.id }}"> </router-link>
+                                    
+                                    <td>{{ individual.is_a_married ? "Married" : "Single" }}</td>
                                     <td><a href="#" data-toggle="tooltip" :title="individual.address">{{ individual.area }}</a></td>
-                                    <td>{{ individual.date_of_birth }}</td>
-                                    <td>{{ caluculateAge(individual.date_of_birth) }}</td>
-                                    <td class='font-italic'>{{ phoneReal(individual.home_phone) }}</td>
-                                    <td class='font-italic'>{{ phoneReal(individual.mobile_phone1) }}</td>
-                                    <td class='font-italic'>{{ individual.mobile_phone2 ? phoneReal(individual.mobile_phone2) : 'empty'}}</td>
-                                    <td>{{ individual.social_status }}</td>
+                                    <td>{{ individual.age }}</td>
+                                    <!-- </router-link> -->
                                 </tr>
                             </tbody>
-                            <!-- else -->
-                            <!-- <tbody>
-                                <tr>
-                                    
-                                    <td class='text-center h5 text-danger' colspan='10'>click add persone</td>
-                                </tr>
-                            </tbody> -->
-                            
                         </table>
+                        
+
                         <div v-else class='text-center'>
-                            <div v-if='alertMsg' class="alert alert-light" role="alert">
-                                {{alertMsg}}
-                            </div>
-                            <div v-else class="alert alert-warning" role="alert">
-                                You did't add any individual
+                            
+                            <div class="alert" role="alert">
+                                No data entered
                             </div>
                         </div>
 
@@ -92,35 +83,64 @@ export default {
             searchType: 'first_name',
             alertMsg: '',
             loading: false,
-            color: '#343A40'
+            color: '#343A40',
+            page: 1,
+            lastPage: null,
+            selectedUsers: []
         }
     },
     computed: {
-
         emptyField(field) {
             if(field){
                 return field
             }else{
                 return 'empty'
             }
+        },
+        disabledNext(){
+            if(this.lastPage == this.page){
+                return true;
+            }
+        },
+        disabledPrevious(){
+            if(this.page == 1){
+                return true;
+            }
+        },
+        visableDelete(){
+            if(this.selectedUsers.length == 0){
+                return false;
+            }
+            return true
+        },
+        visableindividual(){
+            if(this.individuals.length == 0){
+                return false;
+            }
+            return true
         }
     },
     methods: {
         getIndividuals(){
             this.loading = true
-            axios.get('/api/individual/all')
+            const token = "Bearer " + localStorage.getItem("token");
+            axios.get('api/individual?page=' + this.page,  {headers: { Authorization: token }})
             .then(res => {
-                this.individuals = res.data.individuals
+                this.individuals = res.data.data
+                this.lastPage = res.data.last_page
                 this.loading = false;
-            }).catch(err => {
-                console.log(err)
             })
         },
-        caluculateAge(birthday){
-            var birthday = new Date(birthday)
-            var ageDifMs = Date.now() - birthday.getTime();
-            var ageDate = new Date(ageDifMs); // miliseconds from epoch
-            return Math.abs(ageDate.getUTCFullYear() - 1970);
+        goToBlabla(id){
+            this.$router.push({ path: `/individual/one/${id}` })
+        },
+        nextPage(){
+            this.page += 1
+            this.getIndividuals()
+        },
+        previousPage(){
+            this.page -= 1
+            this.getIndividuals()
         }
         ,onChildClick(value){
             
@@ -146,9 +166,21 @@ export default {
         onSearchType(value){
             this.searchType = value
         },
-        phoneReal(value){
-            value = 0+value
-            return value
+        onDelete(){
+            this.loading = true
+            const token = "Bearer " + localStorage.getItem("token");
+            
+            axios.patch('api/individual/delete/multiple', 
+                        { ids: this.selectedUsers },  
+                        { headers: { Authorization: token } })
+            .then(res => {
+                this.getIndividuals();
+                
+            })
+            .catch((error) =>{
+
+                console.log(error.response)
+            })
         }
     },
     created() {
@@ -159,7 +191,13 @@ export default {
 
 <style lang="scss" scoped>
     table{
-        width: max-content !important;
+        width: 100% !important;
+        text-align: right;
+    }
+
+    .click-row:hover{
+        box-shadow: 1px 1px 1px 2px #e0d6d68c;
+        cursor: pointer;
     }
 
     thead th {
@@ -167,5 +205,7 @@ export default {
         top:0px;
         background-color:grey;
     }
+
+
     
 </style>

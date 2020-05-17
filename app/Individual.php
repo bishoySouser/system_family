@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Individual extends Model
 {
@@ -23,10 +24,27 @@ class Individual extends Model
         "mobile_phone1",
         "mobile_phone2",
         "job",
-        "social_status",
+        "is_a_married",
         "special"
     ];
     public function family(){
         return $this->hasOne('App\Family');
+    }
+
+    /**
+     * @param $dateBirth, $dateBirth
+     * @return int $age
+     */
+    public static function calculateAge($dateDeath = null, $dateBirth)
+    {
+        if($dateDeath){
+            $age = Carbon::parse($dateBirth)->diffInYears($dateDeath);
+        }else{
+            $age = Carbon::parse($dateBirth)->diffInYears();
+        }
+
+        return [
+            'age' => $age
+        ];
     }
 }

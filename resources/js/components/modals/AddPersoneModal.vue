@@ -18,19 +18,19 @@
                             <div class="form-group col-4">
                                 <label for="firstname">First Name</label>
                                 <input v-model="firstName" type="text" class="form-control" id="firstname"
-                                placeholder="Jon"
-                                v-bind:class="[ errors.first_name ? 'border-danger text-danger' : '' ]">
+                                        :title="errors.first_name ? errors.first_name : ''"
+                                        v-bind:class="[ errors.first_name ? 'border-danger text-danger' : '' ]">
                             </div>
                             <div class="form-group col-4">
                                 <label for="middlename">Middle Name</label>
                                 <input v-model="middleName" type="text" class="form-control" id="middlename"
-                                placeholder="Elia"
+                                :title="errors.middle_name ? errors.middle_name : ''"
                                 v-bind:class="[ errors.middle_name ? 'border-danger text-danger' : '' ]">
                             </div>
                             <div class="form-group col-4">
                                 <label for="lastname">Last Name</label>
                                 <input v-model='lastName' type="text" class="form-control" id="lastname"
-                                placeholder="Maged"
+                                :title="errors.last_name ? errors.last_name : ''"
                                 v-bind:class="[ errors.last_name ? 'border-danger text-danger' : '' ]">
                             </div>
                         </div>
@@ -46,8 +46,7 @@
                             <div class="form-group col-4">
                                 <label for="placeOfBirth">Place Of Birthday</label>
                                 <select v-model="placeOfBirth" name="" id="placeOfBirth" class='form-control'>
-                                    <option v-for="(city, index) in cities" :key='index' value="Cairo">{{city.city}}</option>
-                                    
+                                    <option v-for="(city, index) in cities" :key='index'>{{city.city}}</option>
                                 </select>
                             </div>
                             
@@ -55,30 +54,13 @@
                                 <label for="gender">Gender</label>
                                 <select v-model="gender" name="" id="gender" class='form-control'>
                                     <option value="male">Male</option>
-                                    <option value="woman">Woman</option>
+                                    <option value="female">Female</option>
                                 </select>
                             </div>
                         </div>
                         <!-- Email -->
                         <div class='form-row'>
-                            <div class="form-group col-8">
-                                <label for="email">Email</label>
-                                <input v-model="email" type="email" class="form-control" id="email"
-                                placeholder="account@serve.co">
-                            </div>
                             <div class="form-group col-4">
-                                <label for="socialStatus">Socail Status</label>
-                                <select v-model="socialStatus" name="" id="socialStatus" class='form-control'>
-                                    <option value="single">Single</option>
-                                    <option value="married">Married</option>
-                                    <option value="widower">Widower</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- address and job data -->
-                        <div class='form-row'>
-                            <div class="form-group col-2">
                                 <label for="area">Area</label>
                                 <select v-model="area" name="" id="area" class='form-control'>
                                     <option value="Kozzika">Kozzika</option>
@@ -88,14 +70,33 @@
                                     <option value="other">other</option>
                                 </select>
                             </div>
-                            <div class="form-group col-6">
+                            <div class="form-group col-4" :hidden='newArea'>
+                                <label for="inputAddress">other area</label>
+                                <input v-model="otherArea" type="text" class="form-control" id="inputAddress"
+                                :title="errors.area ? errors.area : ''"
+                                v-bind:class="[ errors.area ? 'border-danger text-danger' : '' ]">
+                            </div>
+                            
+                        </div>
+
+                        <!-- address and job data -->
+                        <div class='form-row'>
+                            <div class="form-group col-5">
                                 <label for="inputAddress">Address</label>
-                                <input v-model="address" type="text" class="form-control" id="inputAddress" placeholder="1234 Main St"
+                                <input v-model="address" type="text" class="form-control" id="inputAddress"
+                                :title="errors.address ? errors.address : ''"
                                 v-bind:class="[ errors.address ? 'border-danger text-danger' : '' ]">
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-5">
+                                <label for="email">Email</label>
+                                <input v-model="email" type="email" class="form-control" id="email"
+                                :title="errors.email ? errors.email : ''"
+                                v-bind:class="[ errors.email ? 'border-danger text-danger' : '' ]">
+                            </div>
+                            <div class="form-group col-2">
                                 <label for="inputJob">Job</label>
-                                <input v-model="job" type="text" class="form-control" id="inputJib" placeholder="eg: Doctor"
+                                <input v-model="job" type="text" class="form-control" id="inputJob"
+                                :title="errors.job ? errors.job : ''"
                                 v-bind:class="[ errors.job ? 'border-danger text-danger' : '' ]">
                             </div>
                         </div>
@@ -105,39 +106,35 @@
                             <div class='form-group col-4'>
                                 <label for="home">Home Phone</label>
                                 <input v-model="homePhone" type="text" class="form-control" id="home"
-                                placeholder="0220000000"
+                                :title="errors.home_phone ? errors.home_phone : ''"
                                 v-bind:class="[ errors.home_phone ? 'border-danger text-danger' : '' ]">
                             </div>
                             <div class='form-group col-4'>
-                                <label for="mobileNumber1">Mobile Number1</label>
+                                <label for="mobileNumber1">Mobile Number</label>
                                 <input v-model="mobile1" type="text" class="form-control" id="mobileNumber1"
-                                placeholder="01200000000"
+                                :title="errors.mobile_phone1 ? errors.mobile_phone1 : ''"
                                 v-bind:class="[ errors.mobile_phone1 ? 'border-danger text-danger' : '' ]">
                             </div>
-                            <div class='form-group col-4'>
-                                <label for="mobileNumber2">Mobile Number2</label>
+                            <div v-if="othernumber" class='form-group col-4'>
+                                <button type="button" class="btn btn-primary position-absolute" style="bottom:0" @click="addOtherNumber">+ Add other phone</button>
+                            </div>
+                            <div v-else class='form-group col-4'>
+                                <label for="mobileNumber2">Other Number</label>
                                 <input v-model="mobile2" type="text" class="form-control" id="mobileNumber2"
-                                placeholder="01211111111"
-                                v-bind:class="[ errors.mobile2 ? 'border-danger text-danger' : '' ]">
+                                :title="errors.mobile_phone2 ? errors.mobile_phone2 : ''"
+                                v-bind:class="[ errors.mobile_phone2 ? 'border-danger text-danger' : '' ]">
                             </div>
                         </div>
-                        <div class='form-row' v-if="errors">
-                            <div class='form-group col-12'>
-                                <ul class='list-inline'>
-                                    <li v-for="(error,index) in errors" :key='index' class='list-inline-item text-danger font-italic'>
-                                        {{ error[0] }}
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        
                     </form>
 
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click='onConfirm'>Confirm</button>
+                    <button type="button" class="btn btn-primary" @click='onConfirm'>
+                        <MoonLoader v-if="isLoading"  class="text-center" color="#fdf" :size="15"></MoonLoader>
+                        <span v-else>Confirm</span>
+                        </button>
                 </div>
     
             </div>
@@ -148,8 +145,12 @@
 
 <script>
 import cities from '../../assest/files/eg.json'
+import { MoonLoader } from '@saeris/vue-spinners'
     export default {
         name: 'addPersoneModal',
+        components: {
+            MoonLoader
+        },
         data(){
             return{
                 cities: cities,
@@ -162,16 +163,31 @@ import cities from '../../assest/files/eg.json'
                 email: '',
                 socialStatus: 'single',
                 area: 'Kozzika',
+                otherArea: '',
                 address: '',
                 job: '',
                 homePhone: '',
                 mobile1: '',
                 mobile2: '',
                 errors: [],
+                othernumber: true,
+                isLoading: false
+            }
+        },
+        computed: {
+            newArea(){
+                if(this.area == 'other'){
+                    return false
+                }
+                return true
             }
         },
         methods: {
+            addOtherNumber(){
+                this.othernumber = false
+            },
             onConfirm(){
+                    this.isLoading = true;
                     const data = {
                         first_name: this.firstName,
                         middle_name: this.middleName,
@@ -181,24 +197,27 @@ import cities from '../../assest/files/eg.json'
                         gander: this.gender,
                         email: this.email,
                         social_status: this.socialStatus,
-                        area: this.area,
+                        area: this.area == 'other' ? this.otherArea : this.area,
+                        job: this.job,
                         address: this.address,
                         home_phone: this.homePhone,
                         mobile_phone1: this.mobile1,
                         mobile_phone2: this.mobile2,
                     }
+                    const token = "Bearer " + localStorage.getItem("token");
                     axios.create({
                         baseUrl: BASE_URL
-                    }).post("api/individual/add", data)
+                    }).post("api/individual", data, {headers: { Authorization: token }})
                     .then(response => {
-                        
-                        window.confirm('Do you want to save changes?')
-                        location.reload();
+                        this.isLoading = false;
+                        window.location.href = BASE_URL + '/individual/one/' +response.data.id
+                        // this.$router.push({ path: `/individual/one/${response.data.id}` })
                         
                         
                     }).catch(error => {
-                        console.log(error.response.data.error)
-                        this.errors = error.response.data.error
+                        this.isLoading = false;
+                        console.log(error.response.data.errors)
+                        this.errors = error.response.data.errors
                     })
                     
                 // }

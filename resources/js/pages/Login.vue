@@ -115,34 +115,7 @@ export default {
             console.log('Did\'nt go');
             return false
         }
-        //    if(!this.errors.length)
-        //    {
-        //        const data = {
-        //            email: this.formLogin.email,
-        //            password: this.formLogin.password
-        //        }
-        //         this.$store.dispatch('login');
-        //         login(this.$data.formLogin)
-        //         .then(res => {
-        //             this.$store.commit("loginSuccess", res);
-        //             console.log('login is sucssful!')
-        //             this.$router.push({path: "/individual"});
-        //         })
-        //         .catch(error => {
-        //             this.$store.commit("loginFailed", {error});
-        //         })
-                
-               
-                // axios.post("api/auth/login", data)
-                // .then(response => { 
-                //     const token = localStorage.setItem('token', response.data.access_token)
-                //     const user = localStorage.setItem('user', response.data.user)
-                //     this.$router.push("/");
-
-                // }).catch(error => {
-                //     this.errors.push(error.message)
-                // })
-        //    }
+       
        }
     }
 }

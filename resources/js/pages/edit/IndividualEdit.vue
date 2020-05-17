@@ -79,8 +79,10 @@ export default {
     methods:{
         getIndividualInfo(){
             this.loading = true
-            axios.get('/api/individual/one/'+this.individualId)
+            const token = "Bearer " + localStorage.getItem("token");
+            axios.get('/api/individual/'+this.individualId, {headers: { Authorization: token }})
             .then(res => {
+                console.log(res.data);
                 this.individual =  res.data.individual
                 this.loading = false
             })

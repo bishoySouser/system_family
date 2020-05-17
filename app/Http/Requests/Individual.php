@@ -5,9 +5,11 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use App\Traits\HttpStatusResponse;
 
 class Individual extends FormRequest
 {
+    use HttpStatusResponse;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -38,9 +40,9 @@ class Individual extends FormRequest
             "address" => 'required|string',
             "home_phone" => 'required|regex:/(02)[0-9]{8}/',
             "mobile_phone1" => 'required|regex:/(01)[0-9]{9}/',
-            "mobile_phone2" => 'nullable',
+            "mobile_phone2" => 'nullable|regex:/(01)[0-9]{9}/',
             "job" => 'nullable|string',
-            "social_status" => 'required|in:single,married',
+            "is_a_married" => 'nullable|boolean',
             "special" => 'nullable|boolean'
         ];
     }
@@ -60,7 +62,8 @@ class Individual extends FormRequest
     protected function failedValidation(Validator $validator) 
     { 
         //write your bussiness logic here otherwise it will give same old JSON response
-        throw new HttpResponseException(response()->json([ "errors" =>$validator->errors() ], 422)); 
+        throw new HttpResponseException($this->unprocessableEntity( $validator->errors() )); 
+        
     
     }
     
