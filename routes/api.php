@@ -26,20 +26,24 @@ Route::group([
     Route::post('me', 'AuthController@me');
 });
 
-//individual
+// Individual
 Route::resource('individual', 'Api\Individuals')->middleware('jwt.auth');
 Route::patch('individual/delete/multiple', 'Api\Individuals@destroyAll');
 Route::get('individual/unmarried/{name}/{gander?}', 'Api\Individuals@unmarried');
+Route::post('individual/import/excel', 'Api\Individuals@importExcel');
+
+// Family
+Route::apiResource('family', 'Api\families')->middleware('jwt.auth');;
+Route::patch('family/delete/multiple', 'Api\families@destroyAll');
 
 // excel
-Route::post('individual/excel/import', 'Api\ExcelController@importIndividuals');
 
-//family
-Route::post('family/add','Api\FamilyController@addFamily');
-Route::get('family/one/{id}','Api\FamilyController@getFamily');
-Route::get('family/all','Api\FamilyController@getFamilies');
-Route::put('family/edit/{id}','Api\FamilyController@editFamily');
-Route::delete('family/delete/{id}','Api\FamilyController@deleteFamily');
+// //family
+// Route::post('family/add','Api\FamilyController@addFamily');
+// Route::get('family/one/{id}','Api\FamilyController@getFamily');
+// Route::get('family/all','Api\FamilyController@getFamilies');
+// Route::put('family/edit/{id}','Api\FamilyController@editFamily');
+// Route::delete('family/delete/{id}','Api\FamilyController@deleteFamily');
 
 //search
 Route::get('search/individual/{search}','Api\SearchController@individualName');

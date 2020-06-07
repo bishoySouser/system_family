@@ -1,5 +1,4 @@
 <template>  
-    
        <div class='container mt-3'>
         <!-- navbar -->
         <navindividual v-on:childToParent="onChildClick" v-on:toSearchType='onSearchType'/>
@@ -41,7 +40,7 @@
                                     </td>
                                     <td class='font-weight-bold'>{{ (individual.first_name+' '+individual.middle_name+' '+individual.last_name).toUpperCase() }}</td>
                                     
-                                       <router-link :to="{ name: 'individual_edit', params: { individualId: individual.id }}"> </router-link>
+                                       <!-- <router-link :to="{ name: 'individual_edit', params: { individualId: individual.id }}"> </router-link> -->
                                     
                                     <td>{{ individual.is_a_married ? "Married" : "Single" }}</td>
                                     <td><a href="#" data-toggle="tooltip" :title="individual.address">{{ individual.area }}</a></td>

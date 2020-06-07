@@ -13,20 +13,23 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="inputHusband">the husband</label>
-                                <input class="form-control" list="husbands" v-model="man" name='husbands'>
+                                <input class="form-control" list="husbands" v-model="man" v-on:keyup='getMan' name='husbands'>
                                 <datalist id="husbands">
-                                    <option value="Bishoy">Bishoy</option>
+                                    <option  v-for="(man, index) in men" :key="index">
+                                        {{man.first_name+" "+man.middle_name+" "+man.last_name}}
+                                    </option>
                                     
                                 </datalist>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="inputWife">The wife</label>
+                                <label for="inputWife">
+                                    The wife
+                                    <moon-loader class="m-auto" :color="color" :loading="true" :size="10"></moon-loader>
+                                </label>
                                 <input type="text" v-model="woman" class="form-control" id="inputWife" v-on:keyup='getWoman' list='wifes'>
                                 
-                                    <datalist id="wifes" v-for="(woman, index) in womanAll" :key="index">
-                                        <option :value="woman.first_name+' '+woman.middle_name+' '+woman.last_name">
-                                            {{woman.first_name+' '+woman.middle_name+' '+woman.last_name}}
-                                        </option>
+                                    <datalist id="wifes">
+                                        <option  v-for="(woman, index) in womanAll" :key="index" data-value="sd" :value="woman.first_name +' '+woman.middle_name+' '+woman.last_name" />
                                     </datalist>
                                 
                                
@@ -47,30 +50,43 @@
 </template>
 
 <script>
+import { MoonLoader } from '@saeris/vue-spinners'
     export default {
         name: 'addFamilyModal',
+        components:{
+            MoonLoader
+        },
         data(){
             return{
                man: '',
                woman: '',
                manSearch: '',
                womanAll: '',
-               womanId: ''
+               men: '',
+               womanId: '',
+               loading: false,
+               color: '#1a486e'
             }
         },
         methods: {
             getMan(event){
-                axios.get('/api/search/individual/young/male/'+search)
+                axios.get('/api/individual/unmarried/'+this.man+'/male')
                 .then(res => {
-                    this.man = res.data.individual
+                    console.log(res.data.individual[0])
+                    this.men = res.data.individual[0]
                 })
             },
             getWoman(event){
-                axios.get('/api/search/individual/young/female/'+this.woman)
+                this.loading = true;
+                axios.get('/api/individual/unmarried/'+this.woman+'/female')
                 .then(res => {
-                    
-                    this.womanAll = res.data.individuals
+                    this.loading = false;
+                    this.womanAll = res.data.individual[0]
                 })
+            },
+            getWomanId(id){
+                console.log(id);
+                this.womanId = id;
             }
         }
     }

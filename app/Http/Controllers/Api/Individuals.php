@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Http\Requests\Individual;
-use App\Individual as Model;
-use Illuminate\Support\Facades\DB;
-use App\Http\Abstracts\Individual\CreateIndividual;
 use App\Http\Abstracts\Individual\EditIndividual;
+use App\Http\Abstracts\Individual\CreateIndividual;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Individual;
+use App\Imports\IndividualsImport;
+use App\Individual as Model;
 use App\Traits\HttpStatusResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Individuals extends Controller
 {
@@ -50,10 +52,10 @@ class Individuals extends Controller
     public function show($id)
     {
         $individual = [];
-        Model::chunk(200, function ($flights) use (&$individual, $id ) {
-            foreach ($flights as $flight) {
-                if($flight->id == $id){
-                    $individual = $flight;
+        Model::chunk(200, function ($people) use (&$individual, $id ) {
+            foreach ($people as $persone) {
+                if($persone->id == $id){
+                    $individual = $persone;
                     return false;
                 }
             }
@@ -132,5 +134,14 @@ class Individuals extends Controller
         ];
         return $this->created($response);
         
+    }
+
+    public function importExcel(Request $request){
+        $import = new IndividualsImport();
+        $import->import($request->file('individual'));
+        $error = $import->getErrors();
+        dd($error);
+        Excel::import(new IndividualsImport, request()->file('individual'));
+        return request()->file('individual');
     }
 }

@@ -65,11 +65,6 @@ class Individual extends FormRequest
         throw new HttpResponseException($this->unprocessableEntity( $validator->errors() )); 
         
     
-    }
-    
-
-
-
-
+    } 
     
 }

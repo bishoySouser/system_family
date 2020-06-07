@@ -17,7 +17,7 @@ class CreateFamiliesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('father_id')->unique(); // individuals->id;
             $table->unsignedBigInteger('mather_id')->unique(); // individuals->id;
-            $table->date('family_date_from');
+            $table->date('family_date_from')->nullable();
             $table->timestamps();
 
             //foreign key
