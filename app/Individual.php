@@ -27,8 +27,14 @@ class Individual extends Model
         "is_a_married",
         "special"
     ];
-    public function family(){
-        return $this->hasOne('App\Family');
+    public function father(){
+        return $this->hasOne('App\Family', 'father_id');
+    }
+    public function mather(){
+        return $this->hasOne('App\Family', 'mather_id');
+    }
+    public function member(){
+        return $this->hasOne('App\FamilyMember', 'individual_id');
     }
 
     /**
@@ -46,5 +52,16 @@ class Individual extends Model
         return [
             'age' => $age
         ];
+    }
+
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($individual) { // before delete() method call this
+             $individual->member()->delete();
+             $individual->father()->delete();
+             $individual->mather()->delete();
+             // do the rest of the cleanup...
+        });
     }
 }

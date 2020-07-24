@@ -9,39 +9,74 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="inputHusband">the husband</label>
-                                <input class="form-control" list="husbands" v-model="man" v-on:keyup='getMan' name='husbands'>
-                                <datalist id="husbands">
-                                    <option  v-for="(man, index) in men" :key="index">
-                                        {{man.first_name+" "+man.middle_name+" "+man.last_name}}
-                                    </option>
-                                    
+                    <form v-on:submit.prevent="createFamily">
+                        <div class="form-row justify-content-md-center">
+                            <!-- husband -->
+                            <div class="form-group col-md-6 hudband" v-if="step == 1">
+                                <label for="inputHusband">Husband</label>
+                                <i class="fas fa-mars text-primary"></i>
+                                <input 
+                                    class="form-control" 
+                                    list="men" 
+                                    v-model="husband.name"
+                                    @input="getManID"
+                                    v-on:keyup="getMan"
+                                    placeholder="Enter Husband's Name"
+                                />
+                                <datalist id="men">
+                                    <option 
+                                        v-for="man in men" 
+                                        :key="man.name" 
+                                        :data-value="man.id" 
+                                        :value="man.first_name+' '+man.middle_name+' '+man.last_name"
+                                    />
                                 </datalist>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="inputWife">
-                                    The wife
-                                    <moon-loader class="m-auto" :color="color" :loading="true" :size="10"></moon-loader>
-                                </label>
-                                <input type="text" v-model="woman" class="form-control" id="inputWife" v-on:keyup='getWoman' list='wifes'>
-                                
-                                    <datalist id="wifes">
-                                        <option  v-for="(woman, index) in womanAll" :key="index" data-value="sd" :value="woman.first_name +' '+woman.middle_name+' '+woman.last_name" />
-                                    </datalist>
-                                
-                               
-                                
+                            <!-- wife -->
+                            <div class="form-group col-md-6 wife" v-if="step == 2">
+                                <label for="inputWife">Wife</label>
+                                <i class="fas fa-venus text-primary"></i>
+                                <input 
+                                    class="form-control" 
+                                    list="women" 
+                                    v-model="wife.name"
+                                    @input="getWomanID"
+                                    v-on:keyup="getWoman"
+                                    placeholder="Enter Wife's Name"
+                                />
+                                <datalist id="women">
+                                    <option 
+                                        v-for="woman in women" 
+                                        :key="woman.name" 
+                                        :data-value="woman.id" 
+                                        :value="woman.first_name+' '+woman.middle_name+' '+woman.last_name"
+                                    />
+                                </datalist>
                             </div>
-                            <div class='form-group col-md-6 m-auto'>
-                                <label for="inputDate">Date of married</label>
-                                <input type="date" class='form-control' id="inputDate">
-
-                            </div>
+                            <!-- date -->
+                            <div class="form-group col-md-6 date" v-if="step == 3">
+                                <label for="inputWife">Date of married</label>
+                                <input 
+                                    class="form-control" 
+                                    type="date"
+                                    v-model="dateOfMarried"
+                                    min="1950-01-01"
+                                />
+                            </div> 
                         </div>
-                        <button type="submit" class="btn btn-primary float-right">Create Family</button>
+                        <button class="btn btn-primary" @click.prevent="step--" :disabled='step == 1'>Back</button>
+                        <button class="btn btn-primary" @click.prevent="step++" :disabled='step == 3'>
+                            <div v-if="loading" class="spinner-border text-light spinner-border-sm" role="status">
+                                    <span class="sr-only">loading...</span>
+                            </div>
+                            Next
+                        </button>
+                        <button 
+                            v-show="step == 3"
+                            type="submit"
+                            class="btn btn-primary float-right"
+                            :disabled="!(this.husband.id && this.wife.id && this.dateOfMarried)"
+                        >Create Family</button>
                     </form>
                 </div>
             </div>
@@ -58,36 +93,80 @@ import { MoonLoader } from '@saeris/vue-spinners'
         },
         data(){
             return{
-               man: '',
-               woman: '',
-               manSearch: '',
-               womanAll: '',
-               men: '',
-               womanId: '',
-               loading: false,
-               color: '#1a486e'
+                husband: {
+                    id: '',
+                    name: ''
+                },
+                wife: {
+                    id: '',
+                    name: ''
+                },
+                dateOfMarried: '',
+                men: [],
+                women: [],
+                step: 1,
+
+                loading: false
             }
         },
         methods: {
-            getMan(event){
-                axios.get('/api/individual/unmarried/'+this.man+'/male')
-                .then(res => {
-                    console.log(res.data.individual[0])
-                    this.men = res.data.individual[0]
-                })
+            getManID(e) {
+                let value = e.target.value;
+                console.log($('#men [value="' + value + '"]').data('value'));
+                this.husband.id = $('#men [value="' + value + '"]').data('value');
+                // alert($('#browser [value="' + value + '"]').data('customvalue'));
             },
-            getWoman(event){
-                this.loading = true;
-                axios.get('/api/individual/unmarried/'+this.woman+'/female')
-                .then(res => {
-                    this.loading = false;
-                    this.womanAll = res.data.individual[0]
-                })
+            getWomanID(e) {
+                let value = e.target.value;
+                console.log($('#women [value="' + value + '"]').data('value'));
+                this.wife.id = $('#women [value="' + value + '"]').data('value');
+                // alert($('#browser [value="' + value + '"]').data('customvalue'));
             },
-            getWomanId(id){
-                console.log(id);
-                this.womanId = id;
+            getMan(){
+                if(this.husband.name.length >= 3){
+                    this.loading = true
+                    axios.get('/api/individual/unmarried/'+this.husband.name+'/male')
+                    .then(res => {
+                        this.men = res.data.individual[0]
+                        this.loading = false
+                    })
+                }
+            },
+            getWoman(){
+                if(this.wife.name.length >= 3){
+                    this.loading = true
+                    axios.get('/api/individual/unmarried/'+this.wife.name+'/female')
+                    .then(res => {
+                        this.women = res.data.individual[0]
+                        this.loading = false
+                    })
+                }
+            },
+            createFamily(){
+                const data = {
+                        father_id: this.husband.id,
+                        mather_id: this.wife.id,
+                        family_date_from: this.dateOfMarried,
+                    }
+                    const token = "Bearer " + localStorage.getItem("token");
+                    axios.create({
+                        baseUrl: BASE_URL
+                    }).post("api/family", data, {headers: { Authorization: token }})
+                    .then(response => {
+                        
+                        console.log(response.data)
+                        $('#addFamily').modal('hide')
+                        this.$router.push({ path: `/family/one/${response.data.id}` })
+                        
+                        
+                    }).catch(error => {
+                        console.log(error)
+                    })
             }
+            // getWomanId(id){
+            //     console.log(id);
+            //     this.womanId = id;
+            // }
         }
     }
 </script>

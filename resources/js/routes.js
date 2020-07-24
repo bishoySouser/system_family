@@ -1,6 +1,7 @@
 import Home from './pages/Home'
 import Individual from './pages/Individual'
 import IndividualEdit from './pages/edit/IndividualEdit'
+import FamilyEdit from './pages/edit/FamilyEdit'
 import Family from './pages/Family'
 import AddFamily from './pages/family/FamilyAdd'
 import ImportExecl from './pages/ImportExecl'
@@ -30,6 +31,15 @@ export default [
         path: '/individual/one/:individualId',
         component: IndividualEdit,
         name: 'individual_edit',
+        props: true,
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/family/one/:familyId',
+        component: FamilyEdit,
+        name: 'family',
         props: true,
         meta: {
             requiresAuth: true

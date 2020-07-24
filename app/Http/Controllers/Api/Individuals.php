@@ -51,15 +51,10 @@ class Individuals extends Controller
      */
     public function show($id)
     {
-        $individual = [];
-        Model::chunk(200, function ($people) use (&$individual, $id ) {
-            foreach ($people as $persone) {
-                if($persone->id == $id){
-                    $individual = $persone;
-                    return false;
-                }
-            }
-        });
+        $individual = Model::where('id', $id)->with(['father', 'mather', 'member'])->get();
+        
+
+       
         $response = [
             "msg" => 'get Individual' ,
             "individual"  => $individual
@@ -97,7 +92,7 @@ class Individuals extends Controller
     public function destroyAll(Request $request)
     {
         if($request->ids){
-            DB::table('individuals')->whereIn('id' , $request->ids)->delete();
+            Model::whereIn('id' , $request->ids)->delete();
             return $this->ok('Deleted successful');
         }else{
             return $this->unprocessableEntity("Input error!");

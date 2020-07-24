@@ -55,19 +55,21 @@ class Families extends Controller
     public function show($id)
     {
         if(is_numeric($id)){
-            $family = [];
-            Model::chunk(100, function ($rows) use (&$family, $id ) {
-                foreach ($rows as $row) {
-                    if($row->id == $id){
-                        $family = $row;
-                        return false;
-                    }
-                }
-            });
+            $family = DB::table('families')
+                        ->select('families.family_date_from',
+                                DB::raw("CONCAT(F.first_name,' ',F.middle_name,' ',F.last_name) AS father_name"),
+                                DB::raw("CONCAT(M.first_name,' ',M.middle_name,' ',M.last_name) AS mother_name"),
+                                'F.id As f_id',
+                                'M.id As m_id',
+                        )
+                        ->join('individuals AS F', 'families.father_id', '=','F.id')
+                        ->join('individuals AS M', 'families.mather_id', '=','M.id')
+                        ->where('families.id', $id)
+                        ->get();
         }
         $response = [
-            "msg" => 'get Individual' ,
-            "individual"  => $family
+            "msg" => 'get family' ,
+            "family"  => $family
         ];
         return $this->created($response);
     }

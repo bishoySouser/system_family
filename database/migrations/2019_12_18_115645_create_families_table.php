@@ -21,8 +21,8 @@ class CreateFamiliesTable extends Migration
             $table->timestamps();
 
             //foreign key
-            $table->foreign('father_id')->references('id')->on('individuals');
-            $table->foreign('mather_id')->references('id')->on('individuals');
+            $table->foreign('father_id')->references('id')->on('individuals')->onDelete('cascade');
+            $table->foreign('mather_id')->references('id')->on('individuals')->onDelete('cascade');
         });
     }
 

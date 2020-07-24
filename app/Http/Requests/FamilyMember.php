@@ -7,8 +7,9 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use App\Traits\HttpStatusResponse;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
-class Family extends FormRequest
+class FamilyMember extends FormRequest
 {
     use HttpStatusResponse;
     /**
@@ -28,14 +29,13 @@ class Family extends FormRequest
      */
     public function rules()
     {
+        $family = DB::table('families')->select('family_date_from')->where('id', $this->family_id)->first();
         return [
-            "father_id" => ["required", "numeric", "unique:families,father_id","unique:families,father_id,{$this->father_id},father_id", Rule::exists('individuals', 'id')->where(function ($query) {
-                $query->where('gander', 'male');
-            })],
-            "mather_id" => ["required", "numeric","unique:families,mather_id" ,"unique:families,mather_id,{$this->mather_id},mather_id", Rule::exists('individuals', 'id')->where(function ($query) {
-                $query->where('gander', 'female');
-            })],
-            "family_date_from" => "required|date|before_or_equal:today"
+            "family_id" => ["required", "numeric", "exists:families,id"],
+            "individual_id" => ["required", "numeric", "unique:family_members,individual_id",
+             'exists:individuals,id', Rule::exists('individuals', 'id')->where(function ($query) use ($family)  {
+                $query->where('date_of_birth', '>', $family->family_date_from);
+            })]
         ];
     }
 
@@ -43,15 +43,13 @@ class Family extends FormRequest
     public function messages()
     {
         return [
-            'father_id' => 'The father field is required',
-            'mather_id' => 'The mother field is required',
-            'father_id.exists' => 'The father must be male',
-            'mather_id.exists' => 'The mother must be female',
-            'family_date_from' => 'The family date from is required'
+            'family_id.required' => 'The Family is required',
+            'family_id,exists'   => 'The selected family is invalid.',
+            'individual_id.required' => 'The Family\'s Member is required',
+            'individual_id.exists'   => 'The selected Family\'s Member is invalid.',
+            'individual_id.unique'   => 'The Family\'s Member has already been taken.'
         ];
     }
-
-    
 
     /** @param Validator $validator
      *  @return array $error  */

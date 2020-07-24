@@ -8881,6 +8881,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'addFamilyModal',
@@ -8889,38 +8924,84 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      man: '',
-      woman: '',
-      manSearch: '',
-      womanAll: '',
-      men: '',
-      womanId: '',
-      loading: false,
-      color: '#1a486e'
+      husband: {
+        id: '',
+        name: ''
+      },
+      wife: {
+        id: '',
+        name: ''
+      },
+      dateOfMarried: '',
+      men: [],
+      women: [],
+      step: 1,
+      loading: false
     };
   },
   methods: {
-    getMan: function getMan(event) {
+    getManID: function getManID(e) {
+      var value = e.target.value;
+      console.log($('#men [value="' + value + '"]').data('value'));
+      this.husband.id = $('#men [value="' + value + '"]').data('value'); // alert($('#browser [value="' + value + '"]').data('customvalue'));
+    },
+    getWomanID: function getWomanID(e) {
+      var value = e.target.value;
+      console.log($('#women [value="' + value + '"]').data('value'));
+      this.wife.id = $('#women [value="' + value + '"]').data('value'); // alert($('#browser [value="' + value + '"]').data('customvalue'));
+    },
+    getMan: function getMan() {
       var _this = this;
 
-      axios.get('/api/individual/unmarried/' + this.man + '/male').then(function (res) {
-        console.log(res.data.individual[0]);
-        _this.men = res.data.individual[0];
-      });
+      if (this.husband.name.length >= 3) {
+        this.loading = true;
+        axios.get('/api/individual/unmarried/' + this.husband.name + '/male').then(function (res) {
+          _this.men = res.data.individual[0];
+          _this.loading = false;
+        });
+      }
     },
-    getWoman: function getWoman(event) {
+    getWoman: function getWoman() {
       var _this2 = this;
 
-      this.loading = true;
-      axios.get('/api/individual/unmarried/' + this.woman + '/female').then(function (res) {
-        _this2.loading = false;
-        _this2.womanAll = res.data.individual[0];
-      });
+      if (this.wife.name.length >= 3) {
+        this.loading = true;
+        axios.get('/api/individual/unmarried/' + this.wife.name + '/female').then(function (res) {
+          _this2.women = res.data.individual[0];
+          _this2.loading = false;
+        });
+      }
     },
-    getWomanId: function getWomanId(id) {
-      console.log(id);
-      this.womanId = id;
-    }
+    createFamily: function createFamily() {
+      var _this3 = this;
+
+      var data = {
+        father_id: this.husband.id,
+        mather_id: this.wife.id,
+        family_date_from: this.dateOfMarried
+      };
+      var token = "Bearer " + localStorage.getItem("token");
+      axios.create({
+        baseUrl: BASE_URL
+      }).post("api/family", data, {
+        headers: {
+          Authorization: token
+        }
+      }).then(function (response) {
+        console.log(response.data);
+        $('#addFamily').modal('hide');
+
+        _this3.$router.push({
+          path: "/family/one/".concat(response.data.id)
+        });
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    } // getWomanId(id){
+    //     console.log(id);
+    //     this.womanId = id;
+    // }
+
   }
 });
 
@@ -10199,6 +10280,78 @@ __webpack_require__.r(__webpack_exports__);
         return false;
       }
     }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/pages/edit/FamilyEdit.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/pages/edit/FamilyEdit.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'FamilyEdit',
+  props: ['familyId'],
+  data: function data() {
+    return {
+      family: [],
+      loading: false,
+      color: '#343A40'
+    };
+  },
+  methods: {
+    getFamilyInfo: function getFamilyInfo() {
+      var _this = this;
+
+      var token = "Bearer " + localStorage.getItem("token");
+      axios.get('/api/family/' + this.familyId, {
+        headers: {
+          Authorization: token
+        }
+      }).then(function (res) {
+        _this.family = res.data.family[0];
+      });
+    }
+  },
+  created: function created() {
+    this.getFamilyInfo();
   }
 });
 
@@ -47241,130 +47394,259 @@ var render = function() {
           _vm._m(0),
           _vm._v(" "),
           _c("div", { staticClass: "modal-body" }, [
-            _c("form", [
-              _c("div", { staticClass: "form-row" }, [
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c("label", { attrs: { for: "inputHusband" } }, [
-                    _vm._v("the husband")
-                  ]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.man,
-                        expression: "man"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { list: "husbands", name: "husbands" },
-                    domProps: { value: _vm.man },
-                    on: {
-                      keyup: _vm.getMan,
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.man = $event.target.value
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "datalist",
-                    { attrs: { id: "husbands" } },
-                    _vm._l(_vm.men, function(man, index) {
-                      return _c("option", { key: index }, [
-                        _vm._v(
-                          "\n                                    " +
-                            _vm._s(
-                              man.first_name +
-                                " " +
-                                man.middle_name +
-                                " " +
-                                man.last_name
-                            ) +
-                            "\n                                "
+            _c(
+              "form",
+              {
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.createFamily($event)
+                  }
+                }
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "form-row justify-content-md-center" },
+                  [
+                    _vm.step == 1
+                      ? _c(
+                          "div",
+                          { staticClass: "form-group col-md-6 hudband" },
+                          [
+                            _c("label", { attrs: { for: "inputHusband" } }, [
+                              _vm._v("Husband")
+                            ]),
+                            _vm._v(" "),
+                            _c("i", {
+                              staticClass: "fas fa-mars text-primary"
+                            }),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.husband.name,
+                                  expression: "husband.name"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                list: "men",
+                                placeholder: "Enter Husband's Name"
+                              },
+                              domProps: { value: _vm.husband.name },
+                              on: {
+                                input: [
+                                  function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.husband,
+                                      "name",
+                                      $event.target.value
+                                    )
+                                  },
+                                  _vm.getManID
+                                ],
+                                keyup: _vm.getMan
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "datalist",
+                              { attrs: { id: "men" } },
+                              _vm._l(_vm.men, function(man) {
+                                return _c("option", {
+                                  key: man.name,
+                                  attrs: { "data-value": man.id },
+                                  domProps: {
+                                    value:
+                                      man.first_name +
+                                      " " +
+                                      man.middle_name +
+                                      " " +
+                                      man.last_name
+                                  }
+                                })
+                              }),
+                              0
+                            )
+                          ]
                         )
-                      ])
-                    }),
-                    0
-                  )
-                ]),
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.step == 2
+                      ? _c("div", { staticClass: "form-group col-md-6 wife" }, [
+                          _c("label", { attrs: { for: "inputWife" } }, [
+                            _vm._v("Wife")
+                          ]),
+                          _vm._v(" "),
+                          _c("i", { staticClass: "fas fa-venus text-primary" }),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.wife.name,
+                                expression: "wife.name"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              list: "women",
+                              placeholder: "Enter Wife's Name"
+                            },
+                            domProps: { value: _vm.wife.name },
+                            on: {
+                              input: [
+                                function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.wife,
+                                    "name",
+                                    $event.target.value
+                                  )
+                                },
+                                _vm.getWomanID
+                              ],
+                              keyup: _vm.getWoman
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "datalist",
+                            { attrs: { id: "women" } },
+                            _vm._l(_vm.women, function(woman) {
+                              return _c("option", {
+                                key: woman.name,
+                                attrs: { "data-value": woman.id },
+                                domProps: {
+                                  value:
+                                    woman.first_name +
+                                    " " +
+                                    woman.middle_name +
+                                    " " +
+                                    woman.last_name
+                                }
+                              })
+                            }),
+                            0
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.step == 3
+                      ? _c("div", { staticClass: "form-group col-md-6 date" }, [
+                          _c("label", { attrs: { for: "inputWife" } }, [
+                            _vm._v("Date of married")
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.dateOfMarried,
+                                expression: "dateOfMarried"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { type: "date", min: "1950-01-01" },
+                            domProps: { value: _vm.dateOfMarried },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.dateOfMarried = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      : _vm._e()
+                  ]
+                ),
                 _vm._v(" "),
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c(
-                    "label",
-                    { attrs: { for: "inputWife" } },
-                    [
-                      _vm._v(
-                        "\n                                The wife\n                                "
-                      ),
-                      _c("moon-loader", {
-                        staticClass: "m-auto",
-                        attrs: { color: _vm.color, loading: true, size: 10 }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.woman,
-                        expression: "woman"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text", id: "inputWife", list: "wifes" },
-                    domProps: { value: _vm.woman },
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { disabled: _vm.step == 1 },
                     on: {
-                      keyup: _vm.getWoman,
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.woman = $event.target.value
+                      click: function($event) {
+                        $event.preventDefault()
+                        _vm.step--
                       }
                     }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "datalist",
-                    { attrs: { id: "wifes" } },
-                    _vm._l(_vm.womanAll, function(woman, index) {
-                      return _c("option", {
-                        key: index,
-                        attrs: { "data-value": "sd" },
-                        domProps: {
-                          value:
-                            woman.first_name +
-                            " " +
-                            woman.middle_name +
-                            " " +
-                            woman.last_name
-                        }
-                      })
-                    }),
-                    0
-                  )
-                ]),
+                  },
+                  [_vm._v("Back")]
+                ),
                 _vm._v(" "),
-                _vm._m(1)
-              ]),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-primary float-right",
-                  attrs: { type: "submit" }
-                },
-                [_vm._v("Create Family")]
-              )
-            ])
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { disabled: _vm.step == 3 },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        _vm.step++
+                      }
+                    }
+                  },
+                  [
+                    _vm.loading
+                      ? _c(
+                          "div",
+                          {
+                            staticClass:
+                              "spinner-border text-light spinner-border-sm",
+                            attrs: { role: "status" }
+                          },
+                          [
+                            _c("span", { staticClass: "sr-only" }, [
+                              _vm._v("loading...")
+                            ])
+                          ]
+                        )
+                      : _vm._e(),
+                    _vm._v(
+                      "\n                        Next\n                    "
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.step == 3,
+                        expression: "step == 3"
+                      }
+                    ],
+                    staticClass: "btn btn-primary float-right",
+                    attrs: {
+                      type: "submit",
+                      disabled: !(
+                        this.husband.id &&
+                        this.wife.id &&
+                        this.dateOfMarried
+                      )
+                    }
+                  },
+                  [_vm._v("Create Family")]
+                )
+              ]
+            )
           ])
         ])
       ])
@@ -47395,19 +47677,6 @@ var staticRenderFns = [
         },
         [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
       )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group col-md-6 m-auto" }, [
-      _c("label", { attrs: { for: "inputDate" } }, [_vm._v("Date of married")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "date", id: "inputDate" }
-      })
     ])
   }
 ]
@@ -50037,6 +50306,58 @@ var staticRenderFns = [
     ])
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/pages/edit/FamilyEdit.vue?vue&type=template&id=205a30fa&scoped=true&":
+/*!*************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/pages/edit/FamilyEdit.vue?vue&type=template&id=205a30fa&scoped=true& ***!
+  \*************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "container mt-3" }, [
+    _c("div", { staticClass: "card" }, [
+      _c("div", { staticClass: "card-header" }, [
+        _c("h5", [
+          _vm._v("Date of marriage: " + _vm._s(_vm.family.family_date_from))
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "card-body", staticStyle: { "min-height": "70vh" } },
+        [
+          _c("div", { staticClass: "row" }),
+          _vm._v(" "),
+          _c("hr"),
+          _vm._v(" "),
+          _c("div", { staticClass: "row justify-content-md-center" }, [
+            _c("div", { staticClass: "col-md-6" }, [
+              _c("h4", [_vm._v("Father: " + _vm._s(_vm.family.father_name))])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-6" }, [
+              _c("h4", [_vm._v("Mother: " + _vm._s(_vm.family.mother_name))])
+            ])
+          ])
+        ]
+      )
+    ])
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -67803,6 +68124,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/pages/edit/FamilyEdit.vue":
+/*!************************************************!*\
+  !*** ./resources/js/pages/edit/FamilyEdit.vue ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _FamilyEdit_vue_vue_type_template_id_205a30fa_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FamilyEdit.vue?vue&type=template&id=205a30fa&scoped=true& */ "./resources/js/pages/edit/FamilyEdit.vue?vue&type=template&id=205a30fa&scoped=true&");
+/* harmony import */ var _FamilyEdit_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FamilyEdit.vue?vue&type=script&lang=js& */ "./resources/js/pages/edit/FamilyEdit.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _FamilyEdit_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _FamilyEdit_vue_vue_type_template_id_205a30fa_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _FamilyEdit_vue_vue_type_template_id_205a30fa_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "205a30fa",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/pages/edit/FamilyEdit.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/pages/edit/FamilyEdit.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/pages/edit/FamilyEdit.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FamilyEdit_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./FamilyEdit.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/pages/edit/FamilyEdit.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FamilyEdit_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/pages/edit/FamilyEdit.vue?vue&type=template&id=205a30fa&scoped=true&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/pages/edit/FamilyEdit.vue?vue&type=template&id=205a30fa&scoped=true& ***!
+  \*******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FamilyEdit_vue_vue_type_template_id_205a30fa_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./FamilyEdit.vue?vue&type=template&id=205a30fa&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/pages/edit/FamilyEdit.vue?vue&type=template&id=205a30fa&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FamilyEdit_vue_vue_type_template_id_205a30fa_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FamilyEdit_vue_vue_type_template_id_205a30fa_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/pages/edit/IndividualEdit.vue":
 /*!****************************************************!*\
   !*** ./resources/js/pages/edit/IndividualEdit.vue ***!
@@ -67953,11 +68343,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pages_Home__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pages/Home */ "./resources/js/pages/Home.vue");
 /* harmony import */ var _pages_Individual__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pages/Individual */ "./resources/js/pages/Individual.vue");
 /* harmony import */ var _pages_edit_IndividualEdit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pages/edit/IndividualEdit */ "./resources/js/pages/edit/IndividualEdit.vue");
-/* harmony import */ var _pages_Family__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pages/Family */ "./resources/js/pages/Family.vue");
-/* harmony import */ var _pages_family_FamilyAdd__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pages/family/FamilyAdd */ "./resources/js/pages/family/FamilyAdd.vue");
-/* harmony import */ var _pages_ImportExecl__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pages/ImportExecl */ "./resources/js/pages/ImportExecl.vue");
-/* harmony import */ var _pages_ExportExcel__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/ExportExcel */ "./resources/js/pages/ExportExcel.vue");
-/* harmony import */ var _pages_Login__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./pages/Login */ "./resources/js/pages/Login.vue");
+/* harmony import */ var _pages_edit_FamilyEdit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pages/edit/FamilyEdit */ "./resources/js/pages/edit/FamilyEdit.vue");
+/* harmony import */ var _pages_Family__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pages/Family */ "./resources/js/pages/Family.vue");
+/* harmony import */ var _pages_family_FamilyAdd__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pages/family/FamilyAdd */ "./resources/js/pages/family/FamilyAdd.vue");
+/* harmony import */ var _pages_ImportExecl__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/ImportExecl */ "./resources/js/pages/ImportExecl.vue");
+/* harmony import */ var _pages_ExportExcel__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./pages/ExportExcel */ "./resources/js/pages/ExportExcel.vue");
+/* harmony import */ var _pages_Login__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pages/Login */ "./resources/js/pages/Login.vue");
+
 
 
 
@@ -67990,36 +68382,44 @@ __webpack_require__.r(__webpack_exports__);
     requiresAuth: true
   }
 }, {
+  path: '/family/one/:familyId',
+  component: _pages_edit_FamilyEdit__WEBPACK_IMPORTED_MODULE_3__["default"],
+  name: 'family',
+  props: true,
+  meta: {
+    requiresAuth: true
+  }
+}, {
   path: '/family',
-  component: _pages_Family__WEBPACK_IMPORTED_MODULE_3__["default"],
+  component: _pages_Family__WEBPACK_IMPORTED_MODULE_4__["default"],
   name: 'family',
   meta: {
     requiresAuth: true
   }
 }, {
   path: '/family/New',
-  component: _pages_family_FamilyAdd__WEBPACK_IMPORTED_MODULE_4__["default"],
+  component: _pages_family_FamilyAdd__WEBPACK_IMPORTED_MODULE_5__["default"],
   name: 'add-family',
   meta: {
     requiresAuth: true
   }
 }, {
   path: '/import-excel',
-  component: _pages_ImportExecl__WEBPACK_IMPORTED_MODULE_5__["default"],
+  component: _pages_ImportExecl__WEBPACK_IMPORTED_MODULE_6__["default"],
   name: 'import-excel',
   meta: {
     requiresAuth: true
   }
 }, {
   path: '/export-excel',
-  component: _pages_ExportExcel__WEBPACK_IMPORTED_MODULE_6__["default"],
+  component: _pages_ExportExcel__WEBPACK_IMPORTED_MODULE_7__["default"],
   name: 'export-excel',
   meta: {
     requiresAuth: true
   }
 }, {
   path: '/login',
-  component: _pages_Login__WEBPACK_IMPORTED_MODULE_7__["default"],
+  component: _pages_Login__WEBPACK_IMPORTED_MODULE_8__["default"],
   name: 'login',
   meta: {
     guest: true
