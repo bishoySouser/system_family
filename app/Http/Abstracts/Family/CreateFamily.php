@@ -23,6 +23,10 @@ class CreateFamily {
     public static function toBeMarriad($id)
     {
         $persone = Individual::where('id', $id)->update(['is_a_married' => 1]);
-        
+    }
+
+    public static function toBeSingle($id)
+    {
+        $persone = Individual::where('id', $id)->update(['is_a_married' => 0]);
     }
 }

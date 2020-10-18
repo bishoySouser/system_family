@@ -14,7 +14,7 @@
                            <table class='table'>
                             <tbody>
                                 <!-- if individual.length > 0 -->
-                                <tr class="click-row"  v-for="(family, index) in families" :key='index'>
+                                <tr class="click-row"  v-for="(family, index) in families" :key='index' @click="goToBlabla(family.id)">
                                 <!-- <router-link :to="{ name: 'individual_edit', params: { individualId: individual.id }}">  -->
                                     <td v-on:click.stop="">
                                         <input type="checkbox" :value="family.id" aria-label="Checkbox for following text input" >
@@ -66,6 +66,9 @@ export default {
                 console.log(res.data);
                 this.loading = false;
             })
+        },
+        goToBlabla(id){
+            this.$router.push({ path: `/family/one/${id}` })
         }
     },
     created(){

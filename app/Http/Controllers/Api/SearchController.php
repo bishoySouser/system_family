@@ -58,4 +58,25 @@ class SearchController extends Controller
         }
         return response()->json($reponse, 201);
     }
+
+    /**
+     * @param string first_name && middle_name
+     * @param reponse children 
+     */
+    public function getChildren($first, $middle)
+    {
+        $childern = DB::table('individuals')
+            ->select('id', 'first_name')
+            ->where([
+                ['middle_name', '=', $first],
+                ['last_name' , '=', $middle]
+                ]);
+
+        $reponse = [
+            'msg' => 'children list',
+            'children' => $childern->get()
+        ];
+
+        return response()->json($reponse, 201);
+    }
 }

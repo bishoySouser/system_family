@@ -61,15 +61,30 @@ class Families extends Controller
                                 DB::raw("CONCAT(M.first_name,' ',M.middle_name,' ',M.last_name) AS mother_name"),
                                 'F.id As f_id',
                                 'M.id As m_id',
+                                'F.first_name AS father_first',
+                                'F.middle_name AS father_middle',
                         )
                         ->join('individuals AS F', 'families.father_id', '=','F.id')
                         ->join('individuals AS M', 'families.mather_id', '=','M.id')
                         ->where('families.id', $id)
                         ->get();
+            $child = DB::table('families')
+                        ->select('F.*')
+                        ->join('individuals AS F', 'families.father_id', '=','F.id')
+                        ->where('families.id', $id)
+                        ->get();
+
+            $childern = DB::table('family_members')
+                        ->select('Persone.first_name', 'Persone.id')
+                        ->join('individuals AS Persone', 'family_members.individual_id', '=','Persone.id')
+                        ->where('family_members.family_id', $id)
+                        ->get();
         }
         $response = [
             "msg" => 'get family' ,
-            "family"  => $family
+            "family"  => $family,
+            "child_extend" => $child,
+            "childern" => $childern
         ];
         return $this->created($response);
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Abstracts\Individual\EditIndividual;
 use App\Http\Abstracts\Individual\CreateIndividual;
+use App\Http\Abstracts\Family\CreateFamily;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Individual;
 use App\Imports\IndividualsImport;
@@ -92,6 +93,33 @@ class Individuals extends Controller
     public function destroyAll(Request $request)
     {
         if($request->ids){
+            
+
+            // Get Family Ides
+            $family_ids = DB::table("families")
+                            ->where("father_id", $request->ids)
+                            ->orWhere("mather_id", $request->ids)
+                            ->get();
+            // Check get ids
+            if($family_ids){
+                $ids = [];
+                foreach($family_ids as $id){
+                    array_push($ids, $id->id);
+                    // Update to single 
+                    // print_r($id);
+                    CreateFamily::toBeSingle($id->father_id);
+                    CreateFamily::toBeSingle($id->mather_id);
+                }
+                DB::table("families")
+                ->where("id", $ids)
+                ->delete();
+                DB::table("family_members")
+                    ->where("family_id", $ids)
+                    ->delete();
+            }
+            // return 'Done';
+            // Delete family's id and members's id
+            
             Model::whereIn('id' , $request->ids)->delete();
             return $this->ok('Deleted successful');
         }else{
