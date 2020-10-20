@@ -117,7 +117,27 @@ class Families extends Controller
     public function destroyAll(Request $request)
     {
         if($request->ids){
+            // Get Family Ides
+            $family_ids = DB::table("families")
+                            ->where("father_id", $request->ids)
+                            ->orWhere("mather_id", $request->ids)
+                            ->get();
+            // Check get ids
+            if($family_ids){
+                $ids = [];
+                foreach($family_ids as $id){
+                    array_push($ids, $id->id);
+                    // Update to single 
+                    // print_r($id);
+                    CreateFamily::toBeSingle($id->father_id);
+                    CreateFamily::toBeSingle($id->mather_id);
+            }
             DB::table('families')->whereIn('id' , $request->ids)->delete();
+            DB::table("family_members")
+                    ->where("family_id", $request->ids)
+                    ->delete();
+            }
+            // return print_r($request->ids);
             return $this->ok('Deleted successful');
         }else{
             return $this->unprocessableEntity("Input error!");

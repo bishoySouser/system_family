@@ -12,6 +12,11 @@ import storeData from "./store.js";
 //vue-spinners
 import { VueSpinners } from '@saeris/vue-spinners'
 Vue.use(VueSpinners)
+// Vue Swal
+import Vue from 'vue'
+import VueSwal from 'vue-swal'
+
+Vue.use(VueSwal)
 
 const store = new Vuex.Store(storeData);
 const router = new VueRouter({

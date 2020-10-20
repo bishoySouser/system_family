@@ -4,9 +4,6 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="btn btn-primary" href="#">Add persone</a>
-                    </li>
-                    <li class="nav-item">
                         <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFamily" data-whatever="@mdo">Add Family</button>
                     </li>
                     
