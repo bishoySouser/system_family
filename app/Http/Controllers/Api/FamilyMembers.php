@@ -92,7 +92,7 @@ class FamilyMembers extends Controller
     public function destroy($id)
     {
         if($id){
-            DB::table('family_members')->where('id' , $id)->delete();
+            DB::table('family_members')->where('individual_id' , $id)->delete();
             return $this->ok('Deleted successful');
         }else{
             return $this->unprocessableEntity("Input error!");

@@ -124,6 +124,11 @@
                                 :title="errors.mobile_phone2 ? errors.mobile_phone2 : ''"
                                 v-bind:class="[ errors.mobile_phone2 ? 'border-danger text-danger' : '' ]">
                             </div>
+
+                            <div class="form-group col-4">
+                                <button v-if="btEnterFamilyId" type="button" class="btn btn-success" @click="enterFamilyId()">Family ID</button>
+                                <input v-else type="text" class="form-control" v-model="familyID" id="familyID" placeholder="FamilyID: #(123)">
+                            </div>
                         </div>
                     </form>
 
@@ -162,8 +167,10 @@ import cities from '../../assest/files/eg.json'
                 homePhone: '',
                 mobile1: '',
                 mobile2: '',
+                familyID: null,
                 errors: [],
-                otherArea: ''
+                otherArea: '',
+                btEnterFamilyId: true
             }
         },
         computed: {
@@ -196,12 +203,14 @@ import cities from '../../assest/files/eg.json'
                         place_of_birth: this.placeOfBirth,
                         gander: this.gender,
                         email: this.email,
+                        job: this.job,
                         social_status: this.socialStatus,
                         area: this.area == 'other' ? this.otherArea : this.area,
                         address: this.address,
                         home_phone: this.homePhone,
                         mobile_phone1: this.mobile1,
                         mobile_phone2: this.mobile2,
+                        family_id: this.familyID
                     }
                     const token = "Bearer " + localStorage.getItem("token");
                     const id = this.$route.params.individualId;
@@ -219,6 +228,13 @@ import cities from '../../assest/files/eg.json'
                     
                 // }
                 
+            },
+            enterFamilyId()
+            {
+                if(this.btEnterFamilyId)
+                {
+                    this.btEnterFamilyId = false
+                }
             }
         },
         mounted() {

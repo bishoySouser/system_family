@@ -47,3 +47,4 @@ Route::get('search/individual/{search}','Api\SearchController@individualName');
 Route::get('search/individual/young/{grander}/{search}','Api\SearchController@getYoung');
 Route::get('search/individual/children/{middle_n}/{last_n}', 'Api\SearchController@getChildren');
 // ->middleware('jwt.auth');
+Route::get('individualCount','Api\Individuals@individualCount');

@@ -11,13 +11,13 @@
                 </div>
                 <form class="form-inline ml-auto">
                     <input v-model="search" v-on:keyup="emitToParent" type="text" class="form-control mr-sm-2" placeholder="Search">
-                    <select v-model="searchType" v-on:click='emitSearchType' id="socialStatus" class='form-control'>
+                    <!-- <select v-model="searchType" v-on:click='emitSearchType' id="socialStatus" class='form-control'>
                         <option value="first_name">First name</option>
                         <option value="email">Email</option>
                         <option value="area">Area</option>
                         <option value="mobile_phone1">Mobile 1</option>
                         <option value="mobile_phone2">Mobile 2</option>
-                    </select>
+                    </select> -->
                 </form>
             </div>
         </nav>

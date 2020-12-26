@@ -53,7 +53,18 @@ export default {
         logout(){
             this.$store.commit('logout')
             this.$router.push('/login')
+        },
+        getCountIndividual()
+        {
+            axios.get("/api/individualCount")
+            .then(res => {
+                
+                
+            })
         }
+    },
+    created(){
+        this.getCountIndividual()
     }
 }
 </script>

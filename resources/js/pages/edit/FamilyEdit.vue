@@ -5,6 +5,9 @@
            <div v-else class="card">
                <div class="card-header">
                   <h5>Date of marriage: {{family.family_date_from}}</h5>
+                  <p>
+                      <span>Family ID: </span>{{familyId}}
+                  </p>
                </div>
 
                <div class="card-body" style='min-height: 70vh; direction: rtl;'>
@@ -36,7 +39,9 @@
                                 <td class="user-profile" @click="userProfile(child.id)">
                                     <i class="fas fa-address-card"></i>
                                 </td>
-                                <td class="text-danger"><i class="fas fa-user-times"></i></td>
+                                <td class="text-danger" @click="deleteMember(child.id)">
+                                    <i class="fas fa-user-times"></i>
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -237,7 +242,7 @@ export default {
             const token = "Bearer " + localStorage.getItem("token");
             axios.get('/api/family/'+this.familyId, {headers: { Authorization: token }})
             .then(res => {
-                // console.log(res.data.childern)
+                console.log(res.data.family[0])
                 this.family = res.data.family[0];
                 let childProperty = res.data.child_extend[0];
                 this.middleName = childProperty.first_name;
@@ -274,7 +279,7 @@ export default {
                 const token = "Bearer " + localStorage.getItem("token");
                 axios.post("/api/individual", data, {headers: { Authorization: token }})
                 .then(response => {
-                    console.log(response)
+                    // console.log(response)
                     this.buttonLoading = false;
                     location.reload();
                     // window.location.href = BASE_URL + '/individual/one/' +response.data.id
@@ -290,6 +295,18 @@ export default {
         },
         userProfile(user){
             window.location.href = BASE_URL + '/individual/one/' + user
+        },
+        deleteMember(id)
+        {
+            // this.loading = true
+            const token = "Bearer " + localStorage.getItem("token");
+            console.log(id)
+            axios.delete('/api/family-member/'+ id, 
+                { headers: { Authorization: token } })
+            .then(res => {
+                
+                location.reload();
+            })
         }
     },
     created(){

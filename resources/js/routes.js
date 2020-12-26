@@ -7,6 +7,7 @@ import AddFamily from './pages/family/FamilyAdd'
 import ImportExecl from './pages/ImportExecl'
 import ExportExcel from './pages/ExportExcel'
 import Login from './pages/Login'
+import Test from './pages/Test'
 
 
 export default [
@@ -84,6 +85,11 @@ export default [
         meta: {
             guest: true
         }
+    },
+    {
+        path: '/test',
+        component: Test,
+        name: 'test'
     }
 
 ]

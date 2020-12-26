@@ -24,7 +24,7 @@ class Individuals extends Controller
      */
     public function index()
     {
-        $individuals = Model::orderBy('created_at', "DESC")->paginate();
+        $individuals = Model::orderBy('created_at', "DESC")->get();
         return $individuals;
     }
 
@@ -100,8 +100,7 @@ class Individuals extends Controller
                             ->where("father_id", $request->ids)
                             ->orWhere("mather_id", $request->ids)
                             ->get();
-            // Check get ids
-            if($family_ids){
+            if( count($family_ids) ){
                 $ids = [];
                 foreach($family_ids as $id){
                     array_push($ids, $id->id);
@@ -119,7 +118,6 @@ class Individuals extends Controller
             }
             // return 'Done';
             // Delete family's id and members's id
-            
             Model::whereIn('id' , $request->ids)->delete();
             return $this->ok('Deleted successful');
         }else{
@@ -166,5 +164,11 @@ class Individuals extends Controller
         dd($error);
         Excel::import(new IndividualsImport, request()->file('individual'));
         return request()->file('individual');
+    }
+
+    public function individualCount()
+    {
+        $count = Model::count();
+        return $count;
     }
 }

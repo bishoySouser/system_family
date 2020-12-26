@@ -3,18 +3,18 @@
         <!-- navbar -->
         <navindividual v-on:childToParent="onChildClick" v-on:toSearchType='onSearchType'/>
            <div class="card">
-               <div class="card-header">
+               <div class="card-header" style="height: 60px">
                    <div class="row">
-                       <div class="col-md-4">
+                       <div class="col-md-8">
                            Individuals
                        </div>
-                       <div class="col-md-4 mx-auto">
+                       <!-- <div class="col-md-4 mx-auto">
                            <ul v-if="visableindividual" class="pagination">
                                 <li class="page-item"><button class="page-link" v-on:click="previousPage()" :disabled="disabledPrevious">Previous</button></li>
                                 <li v-if="lastPage" class="page-item"><button class="page-link" disabled>{{page+"-"+lastPage}}</button></li>
                                 <li class="page-item"><button  class="page-link"  v-on:click="nextPage()" :disabled="disabledNext">Next</button ></li>
                             </ul>
-                       </div>
+                       </div> -->
                        <div class="col-md-4">
                            <button v-if="visableDelete" type="button" class="btn btn-outline-light float-right mr-3" @click="onDelete()">
                                 <i class="text-danger fas fa-trash-alt fa-2x"></i>
@@ -35,8 +35,8 @@
                                 <!-- if individual.length > 0 -->
                                 <tr class="click-row"  v-for="(individual, index) in individuals" :key='index' @click="goToBlabla(individual.id)">
                                 <!-- <router-link :to="{ name: 'individual_edit', params: { individualId: individual.id }}">  -->
-                                    <td v-on:click.stop="">
-                                        <input type="checkbox" :value="individual.id" v-model="selectedUsers" aria-label="Checkbox for following text input" >
+                                    <td class="text-center" v-on:click.stop="">
+                                        <input class="check-box" type="checkbox" :value="individual.id" v-model="selectedUsers" aria-label="Checkbox for following text input" >
                                     </td>
                                     <td class='font-weight-bold'>{{ (individual.first_name+' '+individual.middle_name+' '+individual.last_name).toUpperCase() }}</td>
                                     
@@ -44,7 +44,7 @@
                                     
                                     <td>{{ individual.is_a_married ? "Married" : "Single" }}</td>
                                     <td><a href="#" data-toggle="tooltip" :title="individual.address">{{ individual.area }}</a></td>
-                                    <td>{{ individual.age }}</td>
+                                    <td>{{ caluculateAge(individual.date_of_birth) }}</td>
                                     <!-- </router-link> -->
                                 </tr>
                             </tbody>
@@ -54,7 +54,7 @@
                         <div v-else class='text-center'>
                             
                             <div class="alert" role="alert">
-                                No data entered
+                                No found
                             </div>
                         </div>
 
@@ -113,7 +113,8 @@ export default {
             return true
         },
         visableindividual(){
-            if(this.individuals.length == 0){
+            // console.log(this.individuals)
+            if(this.individuals == null){
                 return false;
             }
             return true
@@ -123,10 +124,11 @@ export default {
         getIndividuals(){
             this.loading = true
             const token = "Bearer " + localStorage.getItem("token");
-            axios.get('api/individual?page=' + this.page,  {headers: { Authorization: token }})
+            axios.get('api/individual',  {headers: { Authorization: token }})
             .then(res => {
-                this.individuals = res.data.data
-                this.lastPage = res.data.last_page
+                this.individuals = res.data
+                console.log(res.data)
+                // this.lastPage = res.data.last_page
                 this.loading = false;
             })
         },
@@ -174,12 +176,19 @@ export default {
                         { headers: { Authorization: token } })
             .then(res => {
                 this.getIndividuals();
+                this.selectedUsers = []
                 
             })
             .catch((error) =>{
 
                 console.log(error.response)
             })
+        },
+        caluculateAge(birthday){
+            var birthday = new Date(birthday)
+            var ageDifMs = Date.now() - birthday.getTime();
+            var ageDate = new Date(ageDifMs); // miliseconds from epoch
+            return Math.abs(ageDate.getUTCFullYear() - 1970);
         }
     },
     created() {
@@ -203,6 +212,10 @@ export default {
         position:sticky;
         top:0px;
         background-color:grey;
+    }
+
+    .check-box:hover{
+        box-shadow: #a7b4c191 1px 1px 10px 5px;;
     }
 
 

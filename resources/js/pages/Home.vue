@@ -5,7 +5,7 @@
                <div class="col-3 card individual bg-danger text-white text-center">
                     <div class="card-body">
                         <router-link class="btn btn-primary card-title" to='/individual'>
-                            <i class="fas fa-user"></i> Individual <span class="badge badge-light">4</span>
+                            <i class="fas fa-user"></i> Individual <span class="badge badge-light">{{ getCountIndividual() }}</span>
                         </router-link>
                         <p class="card-text">Name, address, phone, email and other information</p>
                     </div>
@@ -14,7 +14,7 @@
                 <div class="col-3 card family bg-success text-white text-center">
                     <div class="card-body">
                         <router-link type="button" class="btn btn-primary card-title" to='/family'>
-                            <i class="fas fa-users"></i> Family <span class="badge badge-light">4</span>
+                            <i class="fas fa-users"></i> Family <span class="badge badge-light"></span>
                         </router-link>
                         <p class="card-text">Family information eg: Date of marriage </p>
                     </div>
@@ -50,6 +50,31 @@ export default {
     name:'home',
     components: {
         
+    },
+    date() {
+        return {
+            individual: 0
+        }
+    },
+    methods: {
+        logout(){
+            this.$store.commit('logout')
+            this.$router.push('/login')
+        },
+        getCountIndividual()
+        {
+            axios.get("/api/individualCount")
+            .then(res => {
+                this.individual = res.data;
+                console.log(res.data);
+                return res.data
+                
+            })
+        }
+    },
+    created(){
+        this.individual = 0
+        this.getCountIndividual()
     }
 }
 </script>
